@@ -1,5 +1,6 @@
 var sequelize = require('sequelize');
 var db = new sequelize('postgres://localhost:5432/wikistack');
+var marked = require('marked');
 
 function generateUrlTitle (title) {
   if (!title) return Math.random().toString(36).substring(2, 7);
@@ -37,6 +38,9 @@ const Page = db.define('page', {
   getterMethods: {
     route() {
       return '/wiki/' + this.urlTitle;
+    },
+    renderedContent() {
+      return marked(this.content.replace(/\[\[(.*?)\]\]/g, '[$1](/wiki/$1)'));
     }
   }
 });

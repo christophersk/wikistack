@@ -3,13 +3,13 @@
 {% block content %}
   <h3>{{ page.title }} <small> (<a href="{{ page.route }}/similar">Similar</a>)</small></h3>
   <h4>by <a href="/users/{{ page.author.id }}">{{ page.author.name }}</a></h4>
-  <div><p>Tags: 
+  <div><p>Tags:
   {% for tag in tags %}
   <a href="/wiki/search?tag={{tag}}">{{tag}}</a>{% if loop.last != true %}, {% endif %}
   {% endfor %}
   </p></div>
   <hr/>
-  <div class="page-body">{{ page.content }}</div>
+  <div class="page-body">{% autoescape false %}{{ page.renderedContent }}{% endautoescape %}</div>
   <hr/>
   <a href="{{ page.route }}/edit" class="btn btn-primary">edit this page</a>
   <a href="{{ page.route }}/delete" class="btn btn-danger">delete this page</a>

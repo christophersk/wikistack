@@ -10,7 +10,9 @@ var PORT = 3000;
 
 app.engine('html', nunjucks.render);
 app.set('view engine', 'html');
-nunjucks.configure('views', { noCache: true });
+var env = nunjucks.configure('views', { noCache: true });
+var AutoEscapeExtension = require("nunjucks-autoescape")(nunjucks);
+env.addExtension('AutoEscapeExtension', new AutoEscapeExtension(env));
 
 app.use(morgan('dev'));
 app.use(bodyParser.json());
