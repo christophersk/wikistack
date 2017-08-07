@@ -11,7 +11,7 @@ const Page = db.define('page', {
     allowNull: false
   },
   content: {
-    type: sequelize.text,
+    type: sequelize.TEXT,
     allowNull: false
   },
   status: sequelize.ENUM('open', 'closed'),
@@ -22,7 +22,7 @@ const Page = db.define('page', {
 }, {
   getterMethods: {
     route() {
-      return 'wiki/' + this.urlTitle;
+      return '/wiki/' + this.urlTitle;
     }
   }
 })
