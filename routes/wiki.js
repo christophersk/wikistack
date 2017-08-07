@@ -11,7 +11,6 @@ router.get('/', function (req, res) {
 
 router.post('/', function (req, res, next) {
   var tags = req.body.tags.split(/\s*,\s*/);
-  console.log(tags);
   User.findOrCreate({ where: { name: req.body.name, email: req.body.email } })
   .then(function(user) {
     return Page.create({
@@ -28,6 +27,14 @@ router.post('/', function (req, res, next) {
   .catch(next);
 });
 
+router.get('/search', function (req, res, next) {
+  Page.findByTag(req.query.tag.split(/\s*,\s*/))
+  .then(function(pages) {
+    res.render('index', { pages });
+  })
+  .catch(next);
+});
+
 router.get('/add', function (req, res) {
   res.render('addpage');
 });
@@ -35,8 +42,19 @@ router.get('/add', function (req, res) {
 router.get('/:urlTitle', function (req, res, next) {
   Page.findOne({ where: { urlTitle: req.params.urlTitle }, include: [ { model: User, as: 'author' }] })
   .then(function(page) {
-    res.render('wikipage', { page,  tags: page.tags.join(', ') });
+    res.render('wikipage', { page,  tags: page.tags });
   }).catch(next);
+});
+
+router.get('/:urlTitle/similar', function (req, res, next) {
+  Page.findOne({ where: { urlTitle: req.params.urlTitle }, include: [ { model: User, as: 'author' }] })
+  .then(function(page) {
+    return page.findSimilar();
+  })
+  .then(function(pages) {
+    res.render('index', { pages });
+  })
+  .catch(next);
 });
 
 module.exports = router;

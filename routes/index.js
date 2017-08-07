@@ -15,3 +15,7 @@ router.get('/', function (req, res, next) {
     res.render('index', { pages });
   }).catch(next);
 });
+
+router.get('/search/', function (req, res, next) {
+  res.render('search');
+});

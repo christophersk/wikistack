@@ -41,6 +41,23 @@ const Page = db.define('page', {
   }
 });
 
+Page.findByTag = function(tag) {
+  return Page.findAll({
+    where: {
+      tags: { $overlap: [tag] }
+    }
+  });
+};
+
+Page.prototype.findSimilar = function() {
+  return Page.findAll({
+    where: {
+      tags: { $overlap: this.tags },
+      id: { $ne: this.id }
+    }
+  });
+};
+
 const User = db.define('user', {
   name: {
     type: sequelize.STRING,
