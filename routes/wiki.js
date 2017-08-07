@@ -10,13 +10,16 @@ router.get('/', function (req, res) {
 });
 
 router.post('/', function (req, res, next) {
+  var tags = req.body.tags.split(/\s*,\s*/);
+  console.log(tags);
   User.findOrCreate({ where: { name: req.body.name, email: req.body.email } })
   .then(function(user) {
     return Page.create({
       title: req.body.title,
       content: req.body.content,
       status: req.body.status,
-      authorId: user[0].id
+      authorId: user[0].id,
+      tags: tags
     });
   })
   .then(function (page) {
@@ -32,8 +35,7 @@ router.get('/add', function (req, res) {
 router.get('/:urlTitle', function (req, res, next) {
   Page.findOne({ where: { urlTitle: req.params.urlTitle }, include: [ { model: User, as: 'author' }] })
   .then(function(page) {
-    //res.json(page);
-    res.render('wikipage', { page });
+    res.render('wikipage', { page,  tags: page.tags.join(', ') });
   }).catch(next);
 });
 

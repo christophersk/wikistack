@@ -23,6 +23,10 @@ const Page = db.define('page', {
   date: {
     type: sequelize.DATE,
     defaultValue: sequelize.NOW
+  },
+  tags: {
+    type: sequelize.ARRAY(sequelize.TEXT),
+    defaultValue: []
   }
 }, {
   hooks: {
