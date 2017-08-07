@@ -1,6 +1,11 @@
 var sequelize = require('sequelize');
 var db = new sequelize('postgres://localhost:5432/wikistack');
 
+function generateUrlTitle (title) {
+  if (!title) return Math.random().toString(36).substring(2, 7);
+  return title.replace(/\s+/g, '_').replace(/\W/g, '');
+}
+
 const Page = db.define('page', {
   title: {
     type: sequelize.STRING,
@@ -20,12 +25,17 @@ const Page = db.define('page', {
     defaultValue: sequelize.NOW
   }
 }, {
+  hooks: {
+    beforeValidate: (page, options) => {
+      page.urlTitle = generateUrlTitle(page.title);
+    }
+  },
   getterMethods: {
     route() {
       return '/wiki/' + this.urlTitle;
     }
   }
-})
+});
 
 const User = db.define('user', {
   name: {
