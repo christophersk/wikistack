@@ -22,7 +22,7 @@ app.use(express.static('./public'));
 app.use('/', routes);
 
 
-models.db.sync({})
+models.db.sync({ force: true })
 .then(function () {
   app.listen(3000, function () {
     console.log('App listening at http://localhost:3000/');
