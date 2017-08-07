@@ -27,7 +27,10 @@ const Page = db.define('page', {
   },
   tags: {
     type: sequelize.ARRAY(sequelize.TEXT),
-    defaultValue: []
+    defaultValue: [],
+    set(val) {
+      this.setDataValue('tags', val.split(/\s*,\s*/))
+    }
   }
 }, {
   hooks: {

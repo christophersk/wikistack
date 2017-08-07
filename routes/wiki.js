@@ -10,7 +10,7 @@ router.get('/', function (req, res) {
 });
 
 router.post('/', function (req, res, next) {
-  var tags = req.body.tags.split(/\s*,\s*/);
+  //var tags = req.body.tags.split(/\s*,\s*/);
   User.findOrCreate({ where: { name: req.body.name, email: req.body.email } })
   .then(function(user) {
     return Page.create({
@@ -18,7 +18,7 @@ router.post('/', function (req, res, next) {
       content: req.body.content,
       status: req.body.status,
       authorId: user[0].id,
-      tags: tags
+      tags: req.body.tags
     });
   })
   .then(function (page) {
@@ -40,14 +40,14 @@ router.get('/add', function (req, res) {
 });
 
 router.get('/:urlTitle', function (req, res, next) {
-  Page.findOne({ where: { urlTitle: req.params.urlTitle }, include: [ { model: User, as: 'author' }] })
+  Page.findOne({ where: { urlTitle: req.params.urlTitle }, include: [{ model: User, as: 'author' }] })
   .then(function(page) {
     res.render('wikipage', { page,  tags: page.tags });
   }).catch(next);
 });
 
 router.get('/:urlTitle/similar', function (req, res, next) {
-  Page.findOne({ where: { urlTitle: req.params.urlTitle }, include: [ { model: User, as: 'author' }] })
+  Page.findOne({ where: { urlTitle: req.params.urlTitle }, include: [{ model: User, as: 'author' }] })
   .then(function(page) {
     return page.findSimilar();
   })
@@ -56,5 +56,24 @@ router.get('/:urlTitle/similar', function (req, res, next) {
   })
   .catch(next);
 });
+
+router.get('/:urlTitle/edit', function (req, res, next) {
+  Page.findOne({ where: { urlTitle: req.params.urlTitle}, include: [{ model: User, as: 'author'}] })
+  .then(function(page) {
+    res.render('editpage', { page })
+  })
+})
+
+router.post('/:urlTitle', function (req, res, next) {
+  Page.findOne({ where: { urlTitle: req.params.urlTitle}, include: [{ model: User, as: 'author'}] })
+  .then(function(page) {
+    console.log(req.body);
+    return page.update(req.body, { fields: ['title', 'content', 'tags', 'status']});
+  })
+  .then(function(page) {
+    res.redirect(page.route);
+  })
+  .catch(next);
+})
 
 module.exports = router;
