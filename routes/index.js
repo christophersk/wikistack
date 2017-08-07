@@ -8,6 +8,8 @@ module.exports = router;
 
 router.use('/wiki/', wikiRouter);
 
+router.use('/users/', userRouter)
+
 router.get('/', function (req, res, next) {
   models.Page.findAll().then(function (pages) {
     res.render('index', { pages });

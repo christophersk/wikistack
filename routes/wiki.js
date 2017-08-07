@@ -30,7 +30,9 @@ router.get('/add', function (req, res) {
 });
 
 router.get('/:urlTitle', function (req, res, next) {
-  Page.findOne({ where: { urlTitle: req.params.urlTitle }}).then(function (page) {
+  Page.findOne({ where: { urlTitle: req.params.urlTitle }, include: [ { model: User, as: 'author' }] })
+  .then(function(page) {
+    //res.json(page);
     res.render('wikipage', { page });
   }).catch(next);
 });
