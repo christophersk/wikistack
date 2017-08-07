@@ -9,7 +9,7 @@ module.exports = router;
 router.use('/wiki/', wikiRouter);
 
 router.get('/', function (req, res, next) {
-  res.render('index');
+  models.Page.findAll().then(function (pages) {
+    res.render('index', { pages });
+  }).catch(next);
 });
-
-

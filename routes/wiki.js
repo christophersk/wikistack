@@ -7,27 +7,25 @@ router.get('/', function (req, res) {
   res.redirect('/');
 });
 
-router.post('/', function (req, res) {
+router.post('/', function (req, res, next) {
   var page = Page.build({
     title: req.body.title,
     content: req.body.content,
     status: req.body.status
   });
   page.save().then(function (page) {
-    res.json(page);
-    // res.redirect('/');
-  }).catch(function (err) {
-    console.log(err);
-    res.sendStatus(500);
-  });
+    res.redirect(page.route);
+  }).catch(next);
 });
 
 router.get('/add', function (req, res) {
   res.render('addpage');
 });
 
-router.get('/:urlTitle', function (req, res) {
-  res.send(req.params.urlTitle);
+router.get('/:urlTitle', function (req, res, next) {
+  Page.findOne({ where: { urlTitle: req.params.urlTitle }}).then(function (page) {
+    res.render('wikipage', { page });
+  }).catch(next);
 });
 
 module.exports = router;
